@@ -23,7 +23,7 @@ namespace TNCovidBedApi
         private readonly ILogger logger;
         private readonly ApiNetworkManager networkManager;
         private readonly Timer updateScheduler;
-        private int previousCacheLength = -1;
+        private int fullHospitalCacheLength = -1;
         private float previousDistance = -1;
         private PointF previousFetchLocation;
 
@@ -71,6 +71,7 @@ namespace TNCovidBedApi
         ///<summary>
         ///Downloads the contents from Hospital Bed details API asynchronously
         ///</summary>
+        ///<param name="header">The request header to download specific data</param>
         ///<returns>
         ///RootBed object
         ///</returns>
@@ -91,18 +92,38 @@ namespace TNCovidBedApi
             return rootBed;
         }
 
-        public async Task<RootBed> GetBedDetailsAsync(RequestHeader header, bool oxygenBedAvailable, bool ICUAvailable, bool normalBedAvailable)
+        ///<summary>
+        ///Downloads the contents from Hospital Bed details API asynchronously
+        ///</summary>
+        ///<returns>
+        ///RootBed object
+        ///</returns>
+        ///<param name="header">The request header to download specific data</param>
+        /// <param name="ICUAvailable">Filter ICU beds based on BedStatus</param>
+        /// <param name="normalBedAvailable">Filter Normal beds based on BedStatus</param>
+        /// <param name="oxygenBedAvailable">Filters Oxygen supported beds based on BedStatus</param>
+        ///<exception cref="TNCovidBedApi.DataDownloadException">
+        ///Thrown when Invalid request URI or network error
+        ///</exception>
+        ///<exception cref="System.Text.Json.JsonException">
+        ///Exception occurs when JSON string cannot be serialized
+        ///</exception>
+        ///<exception cref="System.NotSupportedException">
+        ///Exception is throwed when JSON string does not match RootDistrict type
+        ///</exception>
+        public async Task<RootBed> GetBedDetailsAsync(RequestHeader header, BedStatus oxygenBedAvailable, BedStatus ICUAvailable, BedStatus normalBedAvailable)
         {
             var rootBed = await GetBedDetailsInternalAsync(header);
             var hospitals = rootBed.Result;
             for (int i = 0; i < hospitals.Count; i++)
             {
-                if (IsBedsAvailable(hospitals[i], oxygenBedAvailable, ICUAvailable, normalBedAvailable))
+                if (!IsBedsAvailable(hospitals[i], oxygenBedAvailable.BetStatusToBool(), ICUAvailable.BetStatusToBool(), normalBedAvailable.BetStatusToBool()))
                 {
                     hospitals.RemoveAt(i);
                     i--;
                 }
             }
+            logger.Info($"Filtered Hospital bed details downloaded for the request header {header.ToJSONString()} and returning {rootBed.Result.Count} hospitals");
             return rootBed;
         }
 
@@ -124,7 +145,10 @@ namespace TNCovidBedApi
 
             updateScheduler.Interval = 1800000;
             cacheManager.UpdateHospitalCache(rootBed.Result);
-            previousCacheLength = cacheManager.GetCachedHospitals().Count;
+            if(header.Equals(RequestHeader.CreateRequestHeader("",AllDistricts,AllFacilityType,HospitalSortValue.Alphabetically,true,true)))
+            {
+                fullHospitalCacheLength = cacheManager.GetCachedHospitals().Count;
+            }
             return rootBed;
         }
 

@@ -26,7 +26,7 @@ namespace TNCovidBedApi
         public ReadOnlyCollection<Hospital> FindHospitalsNearby(PointF location, float distance)
         {
             var completeRequestHeader = RequestHeader.CreateRequestHeader("", AllDistricts, AllFacilityType, HospitalSortValue.Alphabetically, true, true);
-            if (previousCacheLength != cacheManager.GetCachedHospitals().Count || cacheManager.GetCachedDistricts().Count == 0)
+            if (fullHospitalCacheLength != cacheManager.GetCachedHospitals().Count)
             {
                 Task.Run(() => this.GetBedDetailsAsync(completeRequestHeader)).Wait();
             }
@@ -70,7 +70,7 @@ namespace TNCovidBedApi
             var filtered = from hospital in hospitals
                            where FilterBedCache(header, hospital, BedStatus.Anything, BedStatus.Anything, BedStatus.NotAvailable)
                            select hospital;
-            logger.Info("Filtered bed details based from cache");
+            logger.Info($"Filtered bed details based from cache for the request header {header.ToString()} and returning {filtered.Count()} hospitals");
             return filtered.ToList().AsReadOnly();
         }
 
@@ -90,7 +90,7 @@ namespace TNCovidBedApi
             var filtered = from hospital in hospitals
                            where FilterBedCache(header, hospital, o2Availability, icuAvailability, normalBedAvailability)
                            select hospital;
-            logger.Info("Filtered bed details based from cache");
+            logger.Info($"Filtered bed details based from cache for the request header {header.ToString()} and returning {filtered.Count()} hospitals");
             return filtered.ToList().AsReadOnly();
         }
 
