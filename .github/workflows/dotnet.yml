@@ -26,7 +26,7 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
     - name: Test .NetCore 3.1
-      run: dotnet test --framework netcoreapp3.1 --no-build --verbosity normal
+      run: dotnet test --framework netcoreapp3.1 --verbosity normal
     
     - name: Test .Net 5
-      run: dotnet test --framework net5.0 --no-build --verbosity normal
+      run: dotnet test --framework net5.0 --verbosity normal
