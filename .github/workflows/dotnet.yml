@@ -17,16 +17,9 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.x
-    - name: .Net 5
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 5.x.x
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore
     - name: Test .NetCore 3.1
       run: dotnet test --framework netcoreapp3.1 --verbosity normal
-    
-    - name: Test .Net 5
-      run: dotnet test --framework net5.0 --verbosity normal
