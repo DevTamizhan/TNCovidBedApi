@@ -29,4 +29,4 @@ jobs:
       run: dotnet test --framework netcoreapp3.1 --no-build --verbosity normal
     
     - name: Test .Net 5
-      run: dotnet test --framwrok net5.0 --no-build --verbosity normal
+      run: dotnet test --framework net5.0 --no-build --verbosity normal
