@@ -12,7 +12,7 @@
     <Summary>Library to get corona ward bed status in Tamil Nadu with some extra features</Summary>
     <PackageProjectUrl>https://github.com/DevTamizhan/TNCovidBedApi</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>TNCovidBed, Coronaward, TamilNadu, Tamil Nadu Corona ward</PackageTags>
+    <PackageTags>TNCovidBed, TNCorona, TamilNadu, TamilNaduCorona</PackageTags>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
