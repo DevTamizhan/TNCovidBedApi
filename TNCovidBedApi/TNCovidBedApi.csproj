@@ -13,6 +13,9 @@
     <PackageProjectUrl>https://github.com/DevTamizhan/TNCovidBedApi</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>TNCovidBed, TNCorona, TamilNadu, TamilNaduCorona</PackageTags>
+    <Version>1.0.1</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
