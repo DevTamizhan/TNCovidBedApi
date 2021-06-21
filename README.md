@@ -25,7 +25,7 @@ The API can be downloaded as nuget package from https://www.nuget.org/packages/T
 
 Or you can direcly install in your project using the command
 
-`dotnet add package TNCovidBedApi --version 1.0.1`
+    dotnet add package TNCovidBedApi --version 1.0.2
 
 Make sure that your project is .Net Core 3.1 or higher
 
