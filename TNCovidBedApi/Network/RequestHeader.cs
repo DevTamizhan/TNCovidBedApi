@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 using TNCovidBedApi.Models;
 
 namespace TNCovidBedApi
@@ -79,6 +80,9 @@ namespace TNCovidBedApi
         /// </para>
         /// </summary>
         /// <returns>RequestHeader instance</returns>
+        /// <exception cref="TNCovidBedApi.NoCacheException">
+        /// Thrown when RequestHeader is created before District cache is created
+        /// </exception>
         private static RequestHeader CreateRequestHeader()
         {
             RequestHeader requestHeaderInstance = new RequestHeader();
@@ -91,9 +95,16 @@ namespace TNCovidBedApi
         /// </summary>
         /// <param name="districts">The districts that need to be filtered</param>
         /// <returns>RequestHeaderRequest header fetches all kinds of hospitals under specified districts</returns>
+        /// <exception cref="TNCovidBedApi.NoCacheException">
+        /// Thrown when RequestHeader is created before District cache is created
+        /// </exception>
         public static RequestHeader CreateRequestHeader(List<DistrictEnum> districts)
         {
             RequestHeader requestHeaderInstance = CreateRequestHeader();
+            if(Cache.DistrictCache.CreateDistrictCache().AllDistricts.Count == 0)
+            {
+                throw new NoCacheException("District cache is empty");
+            }
             requestHeaderInstance.DistrictsIDs = districts.GetDistrictIds();
             return requestHeaderInstance;
         }
@@ -104,6 +115,9 @@ namespace TNCovidBedApi
         /// <param name="searchString">Normal search string for filering hospitals and do not use regular expression</param>
         /// <param name="districts">The districts that need to be filtered</param>
         /// <returns>RequestHeaderRequest header fetches all kinds of hospitals under specified districts that matching the search format</returns>
+        /// <exception cref="TNCovidBedApi.NoCacheException">
+        /// Thrown when RequestHeader is created before District cache is created
+        /// </exception>
         public static RequestHeader CreateRequestHeader(string searchString, List<DistrictEnum> districts)
         {
             RequestHeader requestHeaderInstance = CreateRequestHeader(districts);
@@ -128,6 +142,9 @@ namespace TNCovidBedApi
         /// <para>Default : true</para>
         /// </param>
         /// <returns>RequestHeader with all the filters</returns>
+        /// <exception cref="TNCovidBedApi.NoCacheException">
+        /// Thrown when RequestHeader is created before District cache is created
+        /// </exception>
         public static RequestHeader CreateRequestHeader(List<DistrictEnum> districts, FacilityType type, bool isGovernmentHospital = true, bool isPrivateHospital = true)
         {
             if (type == FacilityType.All)
@@ -161,6 +178,9 @@ namespace TNCovidBedApi
         /// <para>Default : true</para>
         /// </param>
         /// <returns>RequestHeader with all the filters</returns>
+        /// <exception cref="TNCovidBedApi.NoCacheException">
+        /// Thrown when RequestHeader is created before District cache is created
+        /// </exception>
         public static RequestHeader CreateRequestHeader(List<DistrictEnum> districts, FacilityType type, HospitalSortValue sortValue = HospitalSortValue.Alphabetically, bool isGovernmentHospital = true, bool isPrivateHospital = true)
         {
             RequestHeader requestHeaderInstance = CreateRequestHeader(districts, type, isGovernmentHospital, isPrivateHospital);
@@ -191,6 +211,9 @@ namespace TNCovidBedApi
         /// <para>Default : true</para>
         /// </param>
         /// <returns>RequestHeader with all the filters</returns>
+        /// <exception cref="TNCovidBedApi.NoCacheException">
+        /// Thrown when RequestHeader is created before District cache is created
+        /// </exception>
         public static RequestHeader CreateRequestHeader(string searchString, List<DistrictEnum> districts, FacilityType type, HospitalSortValue sortValue = HospitalSortValue.Alphabetically, bool isGovernmentHospital = true, bool isPrivateHospital = true)
         {
             RequestHeader requestHeaderInstance = CreateRequestHeader(districts, type, sortValue, isGovernmentHospital, isPrivateHospital);
@@ -230,7 +253,8 @@ namespace TNCovidBedApi
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(SearchString, PageLimit, SortValue, DistrictsIDs, IsGovernmentHospital, IsPrivateHospital, FacilityTypes);
+            return Tuple.Create(SearchString, PageLimit, SortValue, DistrictsIDs, IsGovernmentHospital, IsPrivateHospital, FacilityTypes).GetHashCode();
         }
+
     }
 }

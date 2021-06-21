@@ -45,17 +45,7 @@ namespace TNCovidBedApi.Models
 
         public override int GetHashCode()
         {
-            HashCode hash = new HashCode();
-            hash.Add(ID);
-            hash.Add(IsDeleted);
-            hash.Add(SortOrder);
-            hash.Add(Code);
-            hash.Add(TamilName);
-            hash.Add(Name);
-            hash.Add(District);
-            hash.Add(CreatedAt);
-            hash.Add(UpdatedAt);
-            return hash.ToHashCode();
+            return Tuple.Create(ID, IsDeleted, SortOrder, Code, TamilName, District, CreatedAt, Tuple.Create(UpdatedAt)).GetHashCode();
         }
 
         /// <summary>

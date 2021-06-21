@@ -32,7 +32,7 @@ namespace TNCovidBedApi.Models
         // override object.GetHashCode
         public override int GetHashCode()
         {
-            return System.HashCode.Combine(ID, Line1, Line2, Line3);
+            return System.Tuple.Create(ID, Line1, Line2, Line3).GetHashCode();
         }
 
         /// <summary>

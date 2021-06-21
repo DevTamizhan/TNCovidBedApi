@@ -28,7 +28,7 @@ namespace TNCovidBedApi.Models
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(PageNumber, PageLimit, SkipCount, TotalCount);
+            return Tuple.Create(PageLimit, PageNumber, SkipCount,TotalCount).GetHashCode();
         }
 
         /// <summary>

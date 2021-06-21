@@ -90,22 +90,8 @@ namespace TNCovidBedApi.Models
 
         public override int GetHashCode()
         {
-            HashCode hash = new HashCode();
-            hash.Add(SupportNumber);
-            hash.Add(IsDeleted);
-            hash.Add(ID);
-            hash.Add(SortOrder);
-            hash.Add(StateCode);
-            hash.Add(Code);
-            hash.Add(TamilName);
-            hash.Add(Name);
-            hash.Add(ShortCode);
-            hash.Add(CreatedAt);
-            hash.Add(UpdatedAt);
-            hash.Add(State);
-            hash.Add(ColorCode);
-            hash.Add(IsSpecial);
-            return hash.ToHashCode();
+            return Tuple.Create(SupportNumber, IsDeleted, ID, SortOrder, StateCode, Code, TamilName, 
+                Tuple.Create(Name,ShortCode, CreatedAt, UpdatedAt, State, ColorCode, IsSpecial)).GetHashCode();
         }
 
         ///<summary>

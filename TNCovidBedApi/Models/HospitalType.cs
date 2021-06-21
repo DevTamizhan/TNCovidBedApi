@@ -28,7 +28,7 @@ namespace TNCovidBedApi.Models
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(ID, Name, IsDeleted);
+            return Tuple.Create(ID, Name, IsDeleted).GetHashCode();
         }
 
         /// <summary>

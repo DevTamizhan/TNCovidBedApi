@@ -60,24 +60,10 @@ namespace TNCovidBedApi.Models
 
         public override int GetHashCode()
         {
-            HashCode hash = new HashCode();
-            hash.Add(ID);
-            hash.Add(BedDetailProcessedDate);
-            hash.Add(Name);
-            hash.Add(District);
-            hash.Add(FacilityType);
-            hash.Add(Type);
-            hash.Add(Landline);
-            hash.Add(MobileNumber);
-            hash.Add(PrimaryContactPerson);
-            hash.Add(CovidBedDetails);
-            hash.Add(ContactDetails);
-            hash.Add(AddressDetail);
-            hash.Add(Latitude);
-            hash.Add(Longitude);
-            hash.Add(UpdatedDateTime);
-            hash.Add(Last6HoursUpdate);
-            return hash.ToHashCode();
+            return Tuple.Create(ID, BedDetailProcessedDate,Name,District,FacilityType,Type,Landline,
+                Tuple.Create(MobileNumber,PrimaryContactPerson,CovidBedDetails,ContactDetails,AddressDetail,Latitude,Longitude,
+                Tuple.Create(UpdatedDateTime,Last6HoursUpdate))
+                ).GetHashCode();
         }
 
         /// <summary>

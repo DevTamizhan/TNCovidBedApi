@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TNCovidBedApi.Cache;
 using TNCovidBedApi.Models;
+using System.Threading.Tasks;
 
 namespace TNCovidBedApi
 {
@@ -21,12 +22,9 @@ namespace TNCovidBedApi
         /// </exception>
         public static List<string> GetDistrictIds(this List<DistrictEnum> districts)
         {
+            System.Diagnostics.Debug.WriteLine("convert");
             List<string> ids = new List<string>();
             var districtList = new List<District>(ApiCacheManager.CreateCacheManager().GetCachedDistricts());
-            if (districtList.Count == 0)
-            {
-                districtList = CreateDistrictCache();
-            }
             for (int i = 0; i < districtList.Count; i++)
             {
                 foreach (var district in districts)
@@ -55,7 +53,7 @@ namespace TNCovidBedApi
         {
             if (Int32.TryParse(type + "", out _))
                 throw new ArgumentOutOfRangeException("Invalid facility type");
-            var enumString = type.ToString().Split(",").ToList();
+            var enumString = type.ToString().Split(',').ToList();
             for (int i = 0; i < enumString.Count; i++)
             {
                 enumString[i] = enumString[i].Trim();
@@ -90,12 +88,6 @@ namespace TNCovidBedApi
                 default:
                     throw new ArgumentOutOfRangeException(nameof(value), "Invalid value is passed");
             }
-        }
-        private static List<District> CreateDistrictCache()
-        {
-            var currentFetch = Network.ApiNetworkManager.CreateAPINetworkManager().GetAllDistrictsAsync().GetAwaiter().GetResult();
-            Cache.ApiCacheManager.CreateCacheManager().UpdateDistrictCache(currentFetch.Result);
-            return currentFetch.Result;
         }
 
         public static bool? BetStatusToBool(this BedStatus status)

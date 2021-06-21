@@ -32,7 +32,7 @@ namespace TNCovidBedApi.Models
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(ID, ContactNumber, ContactName, Timing);
+            return Tuple.Create(ID, ContactNumber, ContactName, Timing).GetHashCode();
         }
 
         /// <summary>

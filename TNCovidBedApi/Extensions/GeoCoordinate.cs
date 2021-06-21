@@ -16,11 +16,11 @@ namespace TNCovidBedApi
         /// <returns>Distance betweens start and end</returns>
         public static float FindDistance(PointF start, PointF end)
         {
-            return (start == end) ? 0 :
+            return (start == end) ? 0 :(float)
                 RadiansToDegree(
-                MathF.Acos(
-                    MathF.Sin(DegreeToRadians(start.X)) * MathF.Sin(DegreeToRadians(end.X)) +
-                    MathF.Cos(DegreeToRadians(start.X)) * MathF.Cos(DegreeToRadians(end.X)) * MathF.Cos(DegreeToRadians(start.Y - end.Y))
+                Math.Acos(
+                    Math.Sin(DegreeToRadians(start.X)) * Math.Sin(DegreeToRadians(end.X)) +
+                    Math.Cos(DegreeToRadians(start.X)) * Math.Cos(DegreeToRadians(end.X)) * Math.Cos(DegreeToRadians(start.Y - end.Y))
                     )
                 ) * 111.18957696f;
         }
@@ -30,9 +30,9 @@ namespace TNCovidBedApi
         /// </summary>
         /// <param name="deg">Degree</param>
         /// <returns>Radian equivalent of degree</returns>
-        private static float DegreeToRadians(float deg)
+        private static double DegreeToRadians(double deg)
         {
-            return (deg * MathF.PI / 180);
+            return (deg * Math.PI / 180);
         }
 
         /// <summary>
@@ -40,9 +40,9 @@ namespace TNCovidBedApi
         /// </summary>
         /// <param name="rad">Radian</param>
         /// <returns>Degree equivalent of radian</returns>
-        private static float RadiansToDegree(float rad)
+        private static double RadiansToDegree(double rad)
         {
-            return (rad / MathF.PI * 180);
+            return (rad / Math.PI * 180);
         }
     }
 }

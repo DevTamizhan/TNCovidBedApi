@@ -37,10 +37,9 @@ namespace Tests
 
         [Test(Description ="Checks whether districts were automatically downloaded when request header is created")]
         [Order(3)]
-        public void RequestHeaderAutomaticDistrictDownload()
+        public void RequestHeaderNoCacheException()
         {
-            Assert.DoesNotThrow(() => RequestHeader.CreateRequestHeader("", service.AllDistricts, TNCovidBedApi.Models.FacilityType.All, HospitalSortValue.Alphabetically, true, true));
-            
+            Assert.Throws<NoCacheException>(() => RequestHeader.CreateRequestHeader(service.AllDistricts));
         }
 
 

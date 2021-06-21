@@ -44,7 +44,7 @@ namespace TNCovidBedApi.Models
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Result, Exception, Pagination, StatusCode, Errors, Warnings);
+            return Tuple.Create(Result, Exception, Pagination, StatusCode, Errors, Warnings).GetHashCode();
         }
 
         ///<summary>

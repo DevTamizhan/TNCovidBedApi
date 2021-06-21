@@ -62,28 +62,10 @@ namespace TNCovidBedApi.Models
 
         public override int GetHashCode()
         {
-            HashCode hash = new HashCode();
-            hash.Add(Remarks);
-            hash.Add(LastUpdatedTime);
-            hash.Add(LastUpdatedBy);
-            hash.Add(LastUpdatedByUser);
-            hash.Add(UpdateMissedCount);
-            hash.Add(ID);
-            hash.Add(TotalBedsInHospital);
-            hash.Add(BedsAllotedForCovidTreatment);
-            hash.Add(AllotedO2Beds);
-            hash.Add(AllotedNonO2Beds);
-            hash.Add(AllotedICUBeds);
-            hash.Add(OccupancyO2Beds);
-            hash.Add(OccupancyNonO2Beds);
-            hash.Add(OccupancyICUBeds);
-            hash.Add(VaccantO2Beds);
-            hash.Add(VaccantNonO2Beds);
-            hash.Add(VaccantICUBeds);
-            hash.Add(StatusAsOf);
-            hash.Add(TotalVaccantBeds);
-            hash.Add(UpdatedOn);
-            return hash.ToHashCode();
+            return Tuple.Create(Remarks, LastUpdatedBy, LastUpdatedTime, LastUpdatedByUser, UpdateMissedCount, ID, TotalBedsInHospital,
+                Tuple.Create(BedsAllotedForCovidTreatment, AllotedO2Beds, AllotedNonO2Beds, AllotedICUBeds, OccupancyICUBeds, OccupancyNonO2Beds, OccupancyO2Beds,
+                Tuple.Create(VaccantICUBeds, VaccantNonO2Beds, VaccantO2Beds, StatusAsOf, TotalBedsInHospital, UpdatedOn)
+                )).GetHashCode();
         }
 
         /// <summary>
