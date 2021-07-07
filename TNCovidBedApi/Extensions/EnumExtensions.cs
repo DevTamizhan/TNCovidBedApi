@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TNCovidBedApi.Cache;
 using TNCovidBedApi.Models;
-using System.Threading.Tasks;
+
 
 namespace TNCovidBedApi
 {
@@ -24,7 +24,7 @@ namespace TNCovidBedApi
         {
             System.Diagnostics.Debug.WriteLine("convert");
             List<string> ids = new List<string>();
-            var districtList = new List<District>(ApiCacheManager.CreateCacheManager().GetCachedDistricts());
+            var districtList = new List<District>(ApiCacheManager.GetCacheManagerInstance.GetCachedDistricts());
             for (int i = 0; i < districtList.Count; i++)
             {
                 foreach (var district in districts)
@@ -90,9 +90,14 @@ namespace TNCovidBedApi
             }
         }
 
+        /// <summary>
+        /// Convert the Bed Status to it's equivalent boolean value. 
+        /// </summary>
+        /// <param name="status">BedStatus enum value</param>
+        /// <returns></returns>
         public static bool? BetStatusToBool(this BedStatus status)
         {
-            switch(status)
+            switch (status)
             {
                 case BedStatus.Available:
                     return true;

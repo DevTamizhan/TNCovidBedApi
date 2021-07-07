@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+using System.Text.Unicode;
 using TNCovidBedApi.Models;
 
 namespace TNCovidBedApi
@@ -101,7 +102,7 @@ namespace TNCovidBedApi
         public static RequestHeader CreateRequestHeader(List<DistrictEnum> districts)
         {
             RequestHeader requestHeaderInstance = CreateRequestHeader();
-            if(Cache.DistrictCache.CreateDistrictCache().AllDistricts.Count == 0)
+            if (Cache.DistrictCache.CreateDistrictCache().AllDistricts.Count == 0)
             {
                 throw new NoCacheException("District cache is empty");
             }
@@ -227,7 +228,9 @@ namespace TNCovidBedApi
         /// <returns>JSON string</returns>
         public string ToJSONString()
         {
-            return JsonSerializer.Serialize<RequestHeader>(this, null);
+            JsonSerializerOptions options = new JsonSerializerOptions();
+            options.Encoder = JavaScriptEncoder.Create(UnicodeRanges.All);
+            return JsonSerializer.Serialize<RequestHeader>(this, options);
         }
 
         /// <summary>

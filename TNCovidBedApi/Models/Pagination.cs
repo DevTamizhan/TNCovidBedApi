@@ -1,6 +1,8 @@
 using System;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.Unicode;
 
 namespace TNCovidBedApi.Models
 {
@@ -28,7 +30,7 @@ namespace TNCovidBedApi.Models
 
         public override int GetHashCode()
         {
-            return Tuple.Create(PageLimit, PageNumber, SkipCount,TotalCount).GetHashCode();
+            return Tuple.Create(PageLimit, PageNumber, SkipCount, TotalCount).GetHashCode();
         }
 
         /// <summary>
@@ -37,7 +39,9 @@ namespace TNCovidBedApi.Models
         /// <returns>JSON string value</returns>
         public override string ToString()
         {
-            return JsonSerializer.Serialize<Pagination>(this, null);
+            JsonSerializerOptions options = new JsonSerializerOptions();
+            options.Encoder = JavaScriptEncoder.Create(UnicodeRanges.All);
+            return JsonSerializer.Serialize<Pagination>(this, options);
         }
     }
 }

@@ -27,13 +27,13 @@ namespace TNCovidBedApi
         private float previousDistance = -1;
         private PointF previousFetchLocation;
 
-        public ApiService()
+        public ApiService(bool writeToFile = true)
         {
             logger = ApiLogger.GetLogger();
             logger.Info("API initialized");
             allDistricts = new List<DistrictEnum>((DistrictEnum[])Enum.GetValues(typeof(DistrictEnum)));
             networkManager = ApiNetworkManager.CreateAPINetworkManager();
-            cacheManager = ApiCacheManager.CreateCacheManager();
+            cacheManager = ApiCacheManager.CreateCacheManager(writeToFile);
             updateScheduler = new Timer(1800000) { AutoReset = true };
             updateScheduler.Elapsed += OnTimeElapsedEvent;
             previousFetchLocation = new PointF(-1, -1);
@@ -145,7 +145,7 @@ namespace TNCovidBedApi
 
             updateScheduler.Interval = 1800000;
             cacheManager.UpdateHospitalCache(rootBed.Result);
-            if(header.Equals(RequestHeader.CreateRequestHeader("",AllDistricts,AllFacilityType,HospitalSortValue.Alphabetically,true,true)))
+            if (header.Equals(RequestHeader.CreateRequestHeader("", AllDistricts, AllFacilityType, HospitalSortValue.Alphabetically, true, true)))
             {
                 fullHospitalCacheLength = cacheManager.GetCachedHospitals().Count;
             }

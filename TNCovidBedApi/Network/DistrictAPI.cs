@@ -1,12 +1,13 @@
 using System;
 using System.Net.Http;
+using System.IO;
 using System.Threading.Tasks;
 using TNCovidBedApi.Models;
 
 namespace TNCovidBedApi.Network
 {
     ///<summary>
-    ///
+    /// Processes the district data fetching storing it as usable RootDistrict object in memory
     ///</summary>
     internal class DistrictAPI
     {
