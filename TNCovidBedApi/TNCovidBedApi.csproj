@@ -5,7 +5,7 @@
     <Authors>DevTamizhan</Authors>
     <Company>TimePassDevelopers</Company>
     <Title>TNCovidBedApi</Title>
-    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/DevTamizhan/TNCovidBedApi.git</RepositoryUrl>
     <Description>Library to get corona ward bed status in Tamil Nadu with some extra features</Description>
@@ -20,8 +20,7 @@
     <AssemblyVersion>1.2.0.0</AssemblyVersion>
     <FileVersion>1.2.0.0</FileVersion>
     <LangVersion>8.0</LangVersion>
-    <PackageReleaseNotes>Fixed library crashes when used with WPF or WinForms
-Modified to be used with .NetStandard 2.0</PackageReleaseNotes>
+    <PackageReleaseNotes>Added Support to store cache in file and retrieve data from file</PackageReleaseNotes>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
