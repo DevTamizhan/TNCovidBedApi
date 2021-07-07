@@ -13,12 +13,12 @@
     <PackageProjectUrl>https://github.com/DevTamizhan/TNCovidBedApi</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>TNCovidBed, TNCorona, TamilNadu, TamilNaduCorona</PackageTags>
-    <Version>1.2.0</Version>
+    <Version>1.2.1</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <AssemblyVersion>1.2.0.0</AssemblyVersion>
-    <FileVersion>1.2.0.0</FileVersion>
+    <AssemblyVersion>1.2.1.0</AssemblyVersion>
+    <FileVersion>1.2.1.0</FileVersion>
     <LangVersion>8.0</LangVersion>
     <PackageReleaseNotes>Added Support to store cache in file and retrieve data from file</PackageReleaseNotes>
   </PropertyGroup>
