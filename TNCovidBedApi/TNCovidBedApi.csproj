@@ -5,7 +5,7 @@
     <Authors>DevTamizhan</Authors>
     <Company>TimePassDevelopers</Company>
     <Title>TNCovidBedApi</Title>
-    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/DevTamizhan/TNCovidBedApi.git</RepositoryUrl>
     <Description>Library to get corona ward bed status in Tamil Nadu with some extra features</Description>
@@ -13,13 +13,14 @@
     <PackageProjectUrl>https://github.com/DevTamizhan/TNCovidBedApi</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>TNCovidBed, TNCorona, TamilNadu, TamilNaduCorona</PackageTags>
-    <Version>1.0.2</Version>
+    <Version>1.2.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <AssemblyVersion>1.0.2.0</AssemblyVersion>
-    <FileVersion>1.0.2.0</FileVersion>
+    <AssemblyVersion>1.2.0.0</AssemblyVersion>
+    <FileVersion>1.2.0.0</FileVersion>
     <LangVersion>8.0</LangVersion>
+    <PackageReleaseNotes>Added Support to store cache in file and retrieve data from file</PackageReleaseNotes>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

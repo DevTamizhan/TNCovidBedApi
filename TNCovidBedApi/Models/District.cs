@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.Unicode;
 
 namespace TNCovidBedApi.Models
 {
@@ -90,8 +92,8 @@ namespace TNCovidBedApi.Models
 
         public override int GetHashCode()
         {
-            return Tuple.Create(SupportNumber, IsDeleted, ID, SortOrder, StateCode, Code, TamilName, 
-                Tuple.Create(Name,ShortCode, CreatedAt, UpdatedAt, State, ColorCode, IsSpecial)).GetHashCode();
+            return Tuple.Create(SupportNumber, IsDeleted, ID, SortOrder, StateCode, Code, TamilName,
+                Tuple.Create(Name, ShortCode, CreatedAt, UpdatedAt, State, ColorCode, IsSpecial)).GetHashCode();
         }
 
         ///<summary>
@@ -102,7 +104,9 @@ namespace TNCovidBedApi.Models
         ///</returns>
         public string GetJsonString()
         {
-            return JsonSerializer.Serialize<District>(this, null);
+            JsonSerializerOptions options = new JsonSerializerOptions();
+            options.Encoder = JavaScriptEncoder.Create(UnicodeRanges.All);
+            return JsonSerializer.Serialize<District>(this, options);
         }
 
         ///<summary>

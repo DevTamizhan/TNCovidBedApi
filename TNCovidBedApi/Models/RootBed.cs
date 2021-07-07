@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.Unicode;
 
 namespace TNCovidBedApi.Models
 {
@@ -63,7 +65,9 @@ namespace TNCovidBedApi.Models
         {
             try
             {
-                return JsonSerializer.Serialize<RootBed>(this, null);
+                JsonSerializerOptions options = new JsonSerializerOptions();
+                options.Encoder = JavaScriptEncoder.Create(UnicodeRanges.All);
+                return JsonSerializer.Serialize<RootBed>(this, options);
             }
             catch (ArgumentException)
             {

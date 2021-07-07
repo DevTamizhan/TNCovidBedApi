@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using TNCovidBedApi.Models;
 
@@ -72,12 +73,34 @@ namespace TNCovidBedApi.Network
             }
         }
 
+        /// <summary>
+        /// Download the hospitals from Hospital API
+        /// </summary>
+        /// <param name="header">RequestHeader to filter the hospital details that need to be fetched</param>
+        /// <returns>RootBed Object</returns>
+        /// ///<exception cref="TNCovidBedApi.DataDownloadException">
+        ///Thrown when Invalid request URI or network error
+        ///</exception>
+        ///<exception cref="System.Text.Json.JsonException">
+        ///Exception occurs when JSON string cannot be serialized
+        ///</exception>
+        ///<exception cref="System.NotSupportedException">
+        ///Exception is throwed when JSON string does not match RootDistrict type
+        ///</exception>
         public async Task<RootBed> GetBedDetailsAsync(RequestHeader header)
         {
             try
             {
                 var rootBed = await hospitalAPI.DownloadHospitalDataAsync(header);
-                logger.Info("Hospital data is downloaded");
+                System.Text.StringBuilder builder = new System.Text.StringBuilder();
+                builder.Append("Hospital data successfully downloaded for districts ");
+                var districtName = new List<District>(Cache.ApiCacheManager.GetCacheManagerInstance.GetCachedDistricts());
+                foreach (var item in header.DistrictsIDs)
+                {
+                    int index = districtName.FindIndex((district) => district.ID == item);
+                    builder.Append(index>=0? districtName[index].Name + " " : "");
+                }
+                logger.Info(builder.ToString());
                 return rootBed;
             }
             catch (DataDownloadException e)

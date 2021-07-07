@@ -16,7 +16,7 @@ namespace TNCovidBedApi
         /// <returns>Distance betweens start and end</returns>
         public static float FindDistance(PointF start, PointF end)
         {
-            return (start == end) ? 0 :(float)
+            return (start == end) ? 0 : (float)
                 RadiansToDegree(
                 Math.Acos(
                     Math.Sin(DegreeToRadians(start.X)) * Math.Sin(DegreeToRadians(end.X)) +

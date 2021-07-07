@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -10,6 +12,10 @@ namespace TNCovidBedApi
 {
     public partial class ApiService
     {
+        public bool IsDistrictCacheFileAvailable { get => File.Exists(Path.Combine(Environment.CurrentDirectory, "districtCache.json")); }
+
+        public bool IsHospitalCacheFileAvailable { get => File.Exists(Path.Combine(Environment.CurrentDirectory, "hospitalCache.json")); }
+
         #region Hospital
 
         /// <summary>
@@ -94,6 +100,18 @@ namespace TNCovidBedApi
             return filtered.ToList().AsReadOnly();
         }
 
+        public ReadOnlyCollection<Hospital> GetBedDetailsCacheFromFile()
+        {
+            var cachedHospitals = cacheManager.GetCachedHospitalsFromFile();
+            if(cachedHospitals.Count == 0)
+            {
+                logger.Error("The hospital cache is empty");
+                throw new NoCacheException("Hospital cache is not available");
+            }
+            return cachedHospitals;
+                
+        }
+
         /// <summary>
         /// Adds the hospitals which match the search criteria
         /// </summary>
@@ -128,6 +146,10 @@ namespace TNCovidBedApi
             return (o2Available == (o2Availability ?? o2Available) && icuAvailable == (icuAvailability ?? icuAvailable) && normalAvailable == (normalBedAvailability ?? normalAvailable));
         }
 
+        public bool DeleteHospitalCacheFile()
+        {
+            return cacheManager.DeleteHospitalFileCache();
+        }
         #endregion Hospital
 
         #region District
@@ -148,6 +170,24 @@ namespace TNCovidBedApi
             return cachedDistricts;
         }
 
+        public ReadOnlyCollection<District> GetAllDistrictsCacheFromFile()
+        {
+            var cachedDistricts = cacheManager.GetCachedDistrictsFromFile();
+            if (cachedDistricts.Count == 0)
+            {
+                logger.Error("No district cache from file is available");
+                throw new NoCacheException("District cache is not available");
+            }
+            return cachedDistricts;
+        }
+
+        public bool DeleteDistrictCacheFile()
+        {
+            return cacheManager.DeleteDistrictFileCache();
+        }
+
         #endregion District
+
+
     }
 }

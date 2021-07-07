@@ -54,7 +54,7 @@ namespace TNCovidBedApi.Cache
         {
             this.LastUpdated = updateTime;
             //Old details will be replaced with new detail and new details will be added directly
-            lock(lockObject)
+            lock (lockObject)
             {
                 for (int i = 0; i < districts.Count; i++)
                 {
