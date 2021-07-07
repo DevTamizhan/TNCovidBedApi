@@ -71,10 +71,9 @@ namespace Tests
         {
             var data = await service.GetBedDetailsAsync(RequestHeader.CreateRequestHeader(service.AllDistricts));
             data.Result.Sort();
-            Hospital[] array = new Hospital[service.GetBedDetailsCache().Count];
-            service.GetBedDetailsCache().CopyTo(array, 0);
-            Array.Sort(array);
-            Assert.AreEqual(array, data.Result);
+            List<Hospital> bedDetails = new List<Hospital>(service.GetBedDetailsCache());
+            bedDetails.Sort();
+            Assert.AreEqual(bedDetails, data.Result);
         }
 
         [Test(Description = "Checks the file log stream is same as expected")]
