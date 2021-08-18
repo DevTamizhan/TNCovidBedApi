@@ -176,6 +176,7 @@ namespace Tests
         private static int ReportCount1 = 0;
 
         [Test(Description ="Checks report count for District API download")]
+        [Retry(5)]
         [Order(17)]
         public async Task GetDistrictsAsyncWithProgress()
         {
@@ -198,6 +199,7 @@ namespace Tests
         private static int ReportCount2 = 0;
 
         [Test(Description ="Checks progress report for Hospital API download")]
+        [Retry(5)]
         [Order(18)]
         public async Task GetHospitalAsyncReport()
         {
