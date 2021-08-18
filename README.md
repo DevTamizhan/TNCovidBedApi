@@ -18,7 +18,8 @@ The library supports
 3. Asynchronous download of corona ward details
 4. Getting cached corona ward details
 5. Getting corona ward details of nearby hospitals from a location with particular distance
-
+6. Add and update cache data from locally saved cache file in specified location
+7. View Download Progress of any request
 
 ### Using in your project
 The API can be downloaded as nuget package from https://www.nuget.org/packages/TNCovidBedApi/
