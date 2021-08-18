@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using TNCovidBedApi;
 using TNCovidBedApi.Models;
@@ -141,5 +142,79 @@ namespace Tests
             await service.GetBedDetailsAsync(RequestHeader.CreateRequestHeader(new List<DistrictEnum>() { DistrictEnum.Ariyalur }));
             Assert.IsFalse(service.IsHospitalCacheFileAvailable);
         }
+
+        [Test(Description ="Checks log file in MyDocument Folder")]
+        [Order(14)]
+        public void CheckLogFileInMyDocs()
+        {
+            string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            ApiService service = new ApiService(true,folderPath);   
+            Assert.IsTrue(System.IO.File.Exists(Path.Combine(folderPath,"api-log.txt")));
+        }
+
+        [Test(Description ="Checks district cache file in MyDocument Folder")]
+        [Order(15)]
+        public async Task CheckDistrictFileInMyDocs()
+        {
+            string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            ApiService service = new ApiService(true, folderPath);
+            await service.GetAllDistrictsAsync();
+            Assert.IsTrue(System.IO.File.Exists(Path.Combine(folderPath, "districtCache.json")));
+        }
+
+        [Test(Description ="Checks hospital cache file in MyDocumet folder")]
+        [Order(16)]
+        public async Task CheckHospitalFileInMyDocs()
+        {
+            string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            ApiService service = new ApiService(true, folderPath);
+            await service.GetAllDistrictsAsync();
+            await service.GetBedDetailsAsync(RequestHeader.CreateRequestHeader(new List<DistrictEnum>() { DistrictEnum.Ariyalur }));
+            Assert.IsTrue(System.IO.File.Exists(Path.Combine(folderPath, "hospitalCache.json")));
+        }
+
+        private static int ReportCount1 = 0;
+
+        [Test(Description ="Checks report count for District API download")]
+        [Order(17)]
+        public async Task GetDistrictsAsyncWithProgress()
+        {
+            ApiService service = new ApiService();
+            Progress<DownloadProgress> progress = new Progress<DownloadProgress>(OnReportDistrict);
+            await service.GetAllDistrictsAsync(progress: progress);
+            Assert.IsTrue(ReportCount1 > 0);
+        }
+
+        private object @lock = new object();
+
+        private void OnReportDistrict(DownloadProgress progress)
+        {
+            lock(@lock)
+            {
+                ReportCount1++;
+            }
+        }
+
+        private static int ReportCount2 = 0;
+
+        [Test(Description ="Checks progress report for Hospital API download")]
+        [Order(18)]
+        public async Task GetHospitalAsyncReport()
+        {
+            ApiService service = new ApiService();
+            Progress<DownloadProgress> progress = new Progress<DownloadProgress>(OnReportHospital);
+            await service.GetAllDistrictsAsync();
+            await service.GetBedDetailsAsync(RequestHeader.CreateRequestHeader(new List<DistrictEnum>() { DistrictEnum.Ariyalur }),progress);
+            Assert.IsTrue(ReportCount2 > 0);
+        }
+
+        private void OnReportHospital(DownloadProgress progress)
+        {
+            lock (@lock)
+            {
+                ReportCount2++;
+            }
+        }
+
     }
 }

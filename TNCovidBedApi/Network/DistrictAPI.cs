@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.IO;
 using System.Threading.Tasks;
 using TNCovidBedApi.Models;
+using System.Threading;
 
 namespace TNCovidBedApi.Network
 {
@@ -19,6 +20,8 @@ namespace TNCovidBedApi.Network
             logger = ApiLogger.GetLogger();
             httpClient = new HttpClient();
         }
+
+
         ///<summary>
         ///Downloads the contents from District API asynchronously
         ///</summary>
@@ -34,15 +37,15 @@ namespace TNCovidBedApi.Network
         ///<exception cref="System.NotSupportedException">
         ///Exception is throwed when JSON string does not match RootDistrict type
         ///</exception>
-        public async Task<RootDistrict> DownloadDistrictAsync()
+        public async Task<RootDistrict> DownloadDistrictAsync(CancellationToken token, IProgress<DownloadProgress> progress = null)
         {
-            HttpResponseMessage responseContent;
             try
             {
-                responseContent = await httpClient.GetAsync(ACCESS_URL);
-                logger.Info("District data is downloaded from the DistrictAPI");
-                string responseString = await responseContent.Content.ReadAsStringAsync();
-                return RootDistrict.ParseJSON(responseString);
+                using(var downloader = new InternalDownloader(ACCESS_URL))
+                {
+                    string responseString =await downloader.DownloadDataAsync(progress, token);
+                    return RootDistrict.ParseJSON(responseString);
+                }
             }
             catch (InvalidOperationException e)
             {
@@ -58,6 +61,11 @@ namespace TNCovidBedApi.Network
             {
                 logger.Error($"District data cannot be downloaded due to network time out {e.Message}");
                 throw new DataDownloadException("District data cannot be downloaded", e);
+            }
+            catch(OperationCanceledException e)
+            {
+                logger.Error($"Operation was cancelled internally {e.Message}");
+                throw new DataDownloadException("District data cannot be downloaded due to operation cancelled internally");
             }
             catch (Exception)
             {

@@ -16,10 +16,10 @@ namespace TNCovidBedApi.Cache
         private readonly DistrictCache districtCache;
         private readonly HospitalCache hospitalCache;
         private readonly ILogger logger;
-
+        private string DirectoryPath;
         public static ApiCacheManager GetCacheManagerInstance { get => cacheManagerInstance ?? ApiCacheManager.CreateCacheManager(); }
 
-        JsonSerializerOptions options = new JsonSerializerOptions() { Encoder = JavaScriptEncoder.Create(UnicodeRanges.All) };
+        readonly JsonSerializerOptions options = new JsonSerializerOptions() { Encoder = JavaScriptEncoder.Create(UnicodeRanges.All) };
         public bool WriteToFile { get; private set; }
         private ApiCacheManager()
         {
@@ -41,6 +41,7 @@ namespace TNCovidBedApi.Cache
             if (cacheManagerInstance is null)
                 cacheManagerInstance = new ApiCacheManager();
             cacheManagerInstance.WriteToFile = true;
+            cacheManagerInstance.DirectoryPath = Directory.GetCurrentDirectory();
             return cacheManagerInstance;
         }
 
@@ -53,11 +54,13 @@ namespace TNCovidBedApi.Cache
         /// </para>
         /// </summary>
         /// <param name="createFileCache">Specifies whether fileCache need to be created or not</param>
+        /// <param name="directoryPath">Speicfies the directory where the cache need to be stored. Default will be null incase of createFileCache is false or else will be the current directory of the library dll file</param>
         /// <returns>The instance of APCacheManager</returns>
-        public static ApiCacheManager CreateCacheManager(bool createFileCache)
+        public static ApiCacheManager CreateCacheManager(bool createFileCache, string directoryPath = null)
         {
             cacheManagerInstance = ApiCacheManager.CreateCacheManager();
             cacheManagerInstance.WriteToFile = createFileCache;
+            cacheManagerInstance.DirectoryPath = directoryPath ?? Directory.GetCurrentDirectory();
             return cacheManagerInstance;
         }
 
@@ -120,7 +123,7 @@ namespace TNCovidBedApi.Cache
         /// </summary>
         private void WriteHospitalsToFile()
         {
-            string filePath = Path.Combine(Environment.CurrentDirectory, "hospitalCache.json");
+            string filePath = Path.Combine(DirectoryPath , "hospitalCache.json");
             try
             {
                 using (FileStream cacheStream = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite))
@@ -147,7 +150,7 @@ namespace TNCovidBedApi.Cache
         /// </summary>
         private void WriteDistrictsToFile()
         {
-            string filePath = Path.Combine(Environment.CurrentDirectory, "districtCache.json");
+            string filePath = Path.Combine(DirectoryPath, "districtCache.json");
             try
             {
                 using (FileStream cacheStream = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite))
@@ -174,7 +177,7 @@ namespace TNCovidBedApi.Cache
         /// <returns>boolean value denoting file is deleted or not</returns>
         public bool DeleteHospitalFileCache()
         {
-            string filePath = Path.Combine(Environment.CurrentDirectory, "hospitalCache.json");
+            string filePath = Path.Combine(DirectoryPath, "hospitalCache.json");
             try
             {
                 if (File.Exists(filePath))
@@ -197,7 +200,7 @@ namespace TNCovidBedApi.Cache
         /// <returns>boolean value denoting file is deleted or not</returns>
         public bool DeleteDistrictFileCache()
         {
-            string filePath = Path.Combine(Environment.CurrentDirectory, "districtCache.json");
+            string filePath = Path.Combine(DirectoryPath, "districtCache.json");
             try
             {
                 if (File.Exists(filePath))
@@ -221,7 +224,7 @@ namespace TNCovidBedApi.Cache
         /// <exception cref="FileCacheException">Thrown when file cannot be parsed or any error while reading file</exception>
         public ReadOnlyCollection<District> GetCachedDistrictsFromFile()
         {
-            string filePath = Path.Combine(Environment.CurrentDirectory, "districtCache.json");
+            string filePath = Path.Combine(DirectoryPath, "districtCache.json");
             try
             {
                 if (!File.Exists(filePath))
@@ -251,7 +254,7 @@ namespace TNCovidBedApi.Cache
         /// <exception cref="FileCacheException">Thrown when file cannot be parsed or any error while reading file</exception>
         public ReadOnlyCollection<Hospital> GetCachedHospitalsFromFile()
         {
-            string filePath = Path.Combine(Environment.CurrentDirectory, "hospitalCache.json");
+            string filePath = Path.Combine(DirectoryPath, "hospitalCache.json");
             try
             {
                 if (!File.Exists(filePath))

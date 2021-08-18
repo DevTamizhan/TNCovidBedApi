@@ -10,12 +10,14 @@ namespace TNCovidBedApi
 
         private readonly LoggingConfiguration logConfig = new LoggingConfiguration();
 
-        private ApiLogger()
+        private static string oldPath = "";
+
+        private ApiLogger(string path = null)
         {
-            var currentDir = System.IO.Directory.GetCurrentDirectory();
-            var fileTarget = new FileTarget("target2")
+            string DirectoryPath = path == null ? System.IO.Directory.GetCurrentDirectory() : path;
+            var fileTarget = new FileTarget("api_logger")
             {
-                FileName = $"{currentDir}/api-log.txt",
+                FileName = $"{DirectoryPath}/api-log.txt",
                 Layout = "${longdate} ${level} ${message}  ${exception} ${event-properties:myProperty}"
             };
             fileTarget.DeleteOldFileOnStartup = false;
@@ -26,7 +28,17 @@ namespace TNCovidBedApi
 
         public static ILogger GetLogger()
         {
-            loggerInstance = loggerInstance ?? new ApiLogger();
+            if (loggerInstance is null)
+                throw new System.InvalidOperationException("");
+            return loggerInstance.logConfig.LogFactory.GetLogger("api_logger");
+        }
+
+        public static ILogger GetLogger(string path)
+        {
+            if(oldPath == path)
+                loggerInstance = loggerInstance ?? new ApiLogger(path);
+            else
+                loggerInstance = new ApiLogger(path);   
             return loggerInstance.logConfig.LogFactory.GetLogger("api_logger");
         }
     }

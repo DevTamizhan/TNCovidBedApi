@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using TNCovidBedApi.Models;
 
@@ -48,11 +50,11 @@ namespace TNCovidBedApi.Network
         ///<exception cref="System.NotSupportedException">
         ///Exception is throwed when JSON string does not match RootDistrict type
         ///</exception>
-        public async Task<RootDistrict> GetAllDistrictsAsync()
+        public async Task<RootDistrict> GetAllDistrictsAsync(CancellationToken token, IProgress<DownloadProgress> progress = null)
         {
             try
             {
-                var rootDistrict = await districtAPI.DownloadDistrictAsync();
+                var rootDistrict = await districtAPI.DownloadDistrictAsync(token, progress);
                 logger.Info("District data is downloaded");
                 return rootDistrict;
             }
@@ -71,6 +73,11 @@ namespace TNCovidBedApi.Network
                 logger.Error($"District data downloaded but cannot be parsed due to {e.Message}");
                 throw;
             }
+            catch(Exception e)
+            {
+                logger.Error($"Some error due to {e.Message}");
+                throw;
+            }
         }
 
         /// <summary>
@@ -87,11 +94,11 @@ namespace TNCovidBedApi.Network
         ///<exception cref="System.NotSupportedException">
         ///Exception is throwed when JSON string does not match RootDistrict type
         ///</exception>
-        public async Task<RootBed> GetBedDetailsAsync(RequestHeader header)
+        public async Task<RootBed> GetBedDetailsAsync(RequestHeader header, CancellationToken token, IProgress<DownloadProgress> progress = null)
         {
             try
             {
-                var rootBed = await hospitalAPI.DownloadHospitalDataAsync(header);
+                var rootBed = await hospitalAPI.DownloadHospitalDataAsync(header, token, progress);
                 System.Text.StringBuilder builder = new System.Text.StringBuilder();
                 builder.Append("Hospital data successfully downloaded for districts ");
                 var districtName = new List<District>(Cache.ApiCacheManager.GetCacheManagerInstance.GetCachedDistricts());

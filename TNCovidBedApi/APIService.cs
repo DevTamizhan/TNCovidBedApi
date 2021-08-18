@@ -26,14 +26,17 @@ namespace TNCovidBedApi
         private int fullHospitalCacheLength = -1;
         private float previousDistance = -1;
         private PointF previousFetchLocation;
+        private readonly string RootDirectory;
 
-        public ApiService(bool writeToFile = true)
+        public ApiService(bool writeToFile = true, string directoryPath = null)
         {
-            logger = ApiLogger.GetLogger();
+            directoryPath = directoryPath == null ? Directory.GetCurrentDirectory() : directoryPath;
+            RootDirectory = directoryPath;
+            logger = ApiLogger.GetLogger(directoryPath);
             logger.Info("API initialized");
             allDistricts = new List<DistrictEnum>((DistrictEnum[])Enum.GetValues(typeof(DistrictEnum)));
             networkManager = ApiNetworkManager.CreateAPINetworkManager();
-            cacheManager = ApiCacheManager.CreateCacheManager(writeToFile);
+            cacheManager = ApiCacheManager.CreateCacheManager(writeToFile, directoryPath);
             updateScheduler = new Timer(1800000) { AutoReset = true };
             updateScheduler.Elapsed += OnTimeElapsedEvent;
             previousFetchLocation = new PointF(-1, -1);
@@ -59,13 +62,18 @@ namespace TNCovidBedApi
         ///<exception cref="System.NotSupportedException">
         ///Exception is throwed when JSON string does not match RootDistrict type
         ///</exception>
-        public async Task<RootDistrict> GetAllDistrictsAsync()
+        public async Task<RootDistrict> GetAllDistrictsAsync(System.Threading.CancellationToken cancellationToken, IProgress<DownloadProgress> progress = null)
         {
-            var _rootDistrict = await networkManager.GetAllDistrictsAsync();
+            var _rootDistrict = await networkManager.GetAllDistrictsAsync(cancellationToken, progress);
             ApiExecutedEventArgs args = new ApiExecutedEventArgs(_rootDistrict, typeof(RootDistrict));
             OnAPIExecuted(args);
             cacheManager.UpdateDistrictCache(_rootDistrict.Result);
             return _rootDistrict;
+        }
+
+        public async Task<RootDistrict> GetAllDistrictsAsync(IProgress<DownloadProgress> progress = null)
+        {
+            return await GetAllDistrictsAsync(System.Threading.CancellationToken.None, progress);
         }
 
         ///<summary>
@@ -84,12 +92,17 @@ namespace TNCovidBedApi
         ///<exception cref="System.NotSupportedException">
         ///Exception is throwed when JSON string does not match RootDistrict type
         ///</exception>
-        public async Task<RootBed> GetBedDetailsAsync(RequestHeader header)
+        public async Task<RootBed> GetBedDetailsAsync(RequestHeader header, System.Threading.CancellationToken cancellationToken, IProgress<DownloadProgress> progress=null)
         {
-            var rootBed = await GetBedDetailsInternalAsync(header);
+            var rootBed = await GetBedDetailsInternalAsync(header, cancellationToken, progress);
             ApiExecutedEventArgs args = new ApiExecutedEventArgs(rootBed, typeof(RootBed));
             OnAPIExecuted(args);
             return rootBed;
+        }
+
+        public async Task<RootBed> GetBedDetailsAsync(RequestHeader header, IProgress<DownloadProgress> progress = null)
+        {
+            return await GetBedDetailsAsync(header, System.Threading.CancellationToken.None, progress);
         }
 
         ///<summary>
@@ -111,9 +124,9 @@ namespace TNCovidBedApi
         ///<exception cref="System.NotSupportedException">
         ///Exception is throwed when JSON string does not match RootDistrict type
         ///</exception>
-        public async Task<RootBed> GetBedDetailsAsync(RequestHeader header, BedStatus oxygenBedAvailable, BedStatus ICUAvailable, BedStatus normalBedAvailable)
+        public async Task<RootBed> GetBedDetailsAsync(RequestHeader header, BedStatus oxygenBedAvailable, BedStatus ICUAvailable, BedStatus normalBedAvailable, System.Threading.CancellationToken cancellationToken, IProgress<DownloadProgress> progress = null)
         {
-            var rootBed = await GetBedDetailsInternalAsync(header);
+            var rootBed = await GetBedDetailsInternalAsync(header, cancellationToken, progress);
             var hospitals = rootBed.Result;
             for (int i = 0; i < hospitals.Count; i++)
             {
@@ -127,17 +140,22 @@ namespace TNCovidBedApi
             return rootBed;
         }
 
+        public async Task<RootBed> GetBedDetailsAsync(RequestHeader header, BedStatus oxygenBedAvailable, BedStatus ICUAvailable, BedStatus normalBedAvailable, IProgress<DownloadProgress> progress = null)
+        {
+            return await GetBedDetailsAsync(header, oxygenBedAvailable, ICUAvailable, normalBedAvailable, System.Threading.CancellationToken.None, progress);
+        }
+
         /// <summary>
         /// Gets the FileStream of log data
         /// </summary>
         /// <returns>FileStream object with only access to read</returns>
         public FileStream GetLogData()
         {
-            return new FileStream($"{Directory.GetCurrentDirectory()}/api-log.txt", FileMode.Open, FileAccess.Read, FileShare.Read);
+            return new FileStream(Path.Combine(RootDirectory,"api-log.txt"), FileMode.Open, FileAccess.Read, FileShare.Read);
         }
-        private async Task<RootBed> GetBedDetailsInternalAsync(RequestHeader header)
+        private async Task<RootBed> GetBedDetailsInternalAsync(RequestHeader header, System.Threading.CancellationToken cancellationToken, IProgress<DownloadProgress> progress = null)
         {
-            var rootBed = await networkManager.GetBedDetailsAsync(header);
+            var rootBed = await networkManager.GetBedDetailsAsync(header, cancellationToken, progress);
             if (!updateScheduler.Enabled)
             {
                 updateScheduler.Enabled = true;
@@ -164,7 +182,7 @@ namespace TNCovidBedApi
         {
             var completeRequestHeader = RequestHeader.CreateRequestHeader("", AllDistricts, AllFacilityType, HospitalSortValue.Alphabetically, true, true);
             logger.Info("Initializing the re-download for Hospital data to fetch all data");
-            Task.Run(() => this.GetBedDetailsAsync(completeRequestHeader)).Wait();
+            Task.Run(() => this.GetBedDetailsAsync(completeRequestHeader, System.Threading.CancellationToken.None)).Wait();
         }
     }
 }
